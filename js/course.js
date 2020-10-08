@@ -35,6 +35,7 @@ function loadSchool(){
 		      </div>
 		      <div class="modal-body">
 		      		<div class="alert alert-danger" role="alert"></div>
+		      		<div class="alert alert-success" role="alert"></div>
 			        <div class="form-group">
 			            <label for="recipient-name" class="col-form-label">Module Name</label>
 			            <input type="text" placeholder="Type the module name" class="form-control" id="module_name">
@@ -42,7 +43,7 @@ function loadSchool(){
 			        <div class="form-group school_value">
 			        </div>
 		          	<div class="d-flex justify-content-center">
-				    	<div class="spinner-border text-success spin">
+				    	<div class="spinner-border text-success module-spinner">
 				    	</div>
 				    </div>
 		      </div>
@@ -82,8 +83,4 @@ function getSchool(){
 		$('.school-name').text("Error 404 something went wrong")
 		hideSpinner()
 	})
-}
-
-function newModuleModal(){
-	$('#newModuleModal').modal('show')
 }

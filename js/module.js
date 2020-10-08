@@ -48,3 +48,38 @@ function getUrlValue(type){
 		return urlParams.get("i")
 	}
 }
+
+function newModuleModal(){
+	$('.module-spinner').hide()
+	hideError()
+	hideSuccess()
+	$('#newModuleModal').modal('show')
+}
+
+function addModule(){
+	hideError()
+	hideSuccess()
+	if($('#module_name').val()){
+		$('.module-spinner').show()
+		axios.post(URL+"new_module",{
+			token:localStorage.getItem('token'),
+			school:parseInt(getUrlValue('s')),
+			faculty:parseInt(getUrlValue('f')),
+			course:parseInt(getUrlValue('c')),
+			module:$('#module_name').val()
+		}).then(res=>{
+			writeSuccessText($('#module_name').val().toUpperCase()+" was added as a module successfully")
+			$('#module_name').val('')
+			$('.module-spinner').hide()
+			showSuccess()	
+		}).catch(err =>{
+			writeErrorText(err.response.data.status)
+			$('.module-spinner').hide()
+			showError()
+		})
+
+	}else{
+		writeErrorText(errorMessage('Fill in all the required field'))
+		showError()
+	}
+}

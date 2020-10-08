@@ -6,6 +6,14 @@ function hideError(){
 	$('.alert-danger').hide()
 }
 
+function hideSuccess(){
+	$('.alert-success').hide()
+}
+
+function showSuccess(){
+	$('.alert-success').show()
+}
+
 function errorMessage(message){
 	let m = ''
 	if (message){
@@ -25,6 +33,10 @@ function showSpinner(){
 
 function writeErrorText(message){
 	$('.alert-danger').text(message)
+}
+
+function writeSuccessText(message){
+	$('.alert-success').text(message)
 }
 
 function goToAdmin(){
