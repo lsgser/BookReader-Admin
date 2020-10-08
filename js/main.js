@@ -8,10 +8,16 @@ $('#content').append(
 	  <div class="collapse navbar-collapse" id="navbarCollapse">
 	    <ul class="navbar-nav ml-auto">
 	      <li class="nav-item mr-3">
-	        <button class="btn btn-outline-success my-2 my-sm-0 ml-" onclick="newSchoolModal()">New School</button>
+	        <button class="btn btn-outline-success " onclick="newSchoolModal()">New School</button>
 	      </li>
-	      <li class="nav-item">
-	        <button class="btn btn-outline-success my-2 my-sm-0 ml-auto" onclick="logout()">Logout</button>
+	      <li class="nav-item mr-3">
+	        <button class="btn btn-outline-success " onclick="goToBooks()">Books</button>
+	      </li>
+	      <li class="nav-item mr-3">
+	        <button class="btn btn-outline-success " onclick="goToUsers()">Users</button>
+	      </li>
+	      <li class="nav-item mr-3">
+	        <button class="btn btn-outline-success " onclick="logout()">Logout</button>
 	      </li>
 	    </ul>  
 	  </div>
@@ -111,4 +117,12 @@ function addNewSchool(){
 		writeErrorText(errorMessage('Fill in all the required fields'))
 		showError()
 	}
+}
+
+function goToUsers(){
+	window.location.href=R_URL+"user.html"
+}
+
+function goToBooks(){
+	window.location.href=R_URL+"book.html"	
 }
