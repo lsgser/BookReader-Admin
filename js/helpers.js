@@ -13,4 +13,24 @@ function errorMessage(message){
 	}
 
 	return m
+}
+
+function hideSpinner(){
+	$('.spin').hide()
+}
+
+function showSpinner(){
+	$('.spin').show()
+}
+
+function writeErrorText(message){
+	$('.alert-danger').text(message)
+}
+
+function goToAdmin(){
+	window.location.href= R_URL+"admin.html"
+}	
+
+function reloadAdmin(){
+	location.reload()
 }	

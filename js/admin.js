@@ -27,7 +27,7 @@ function getSchools(){
 		              <p class="card-text">`+s.school+`</p>
 		              <div class="d-flex justify-content-between align-items-center">
 		                <div class="btn-group">
-		                  <button type="button" class="btn btn-sm btn-outline-secondary">View</button>
+		                  <button type="button" class="btn btn-sm btn-outline-secondary" onclick="goToSchool('`+s.school+`')">View</button>
 		                  <!--
 		                  <button type="button" class="btn btn-sm btn-outline-secondary">Edit</button>
 		                  -->
@@ -41,4 +41,8 @@ function getSchools(){
 
 		$('.spinner-grow').hide()
 	})
+}
+
+function goToSchool(school){
+	window.location.href=R_URL+"school.html?s="+school
 }

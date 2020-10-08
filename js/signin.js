@@ -41,12 +41,12 @@ function signIn(){
 			errMsg = errorMessage(err.response.data.status)
 			$('.alert-danger').text(errMsg)
 			showError()
-			console.log(errMsg)
+			//console.log(errMsg)
 		})
 	}else{
 		errMsg = errorMessage("Fill in all fields")
 		$('.alert-danger').text(errMsg)
 		showError()
-		console.log('Hey '+errMsg)
+		//console.log('Hey '+errMsg)
 	}
 }
