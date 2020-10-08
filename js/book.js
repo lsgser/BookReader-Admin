@@ -15,10 +15,11 @@ function loadBook(){
 			</div>
 		</div>
 		<h5 class="d-flex justify-content-center error-search"></h5>
+		<h5 class="d-flex justify-content-center book-not-available"></h5>
 		<div class="spinner-border text-dark book-search-spinner">
 	    </div>
 		<div class="d-flex justify-content-center">
-			<button type="button" class="btn btn-outline-success mt-3" onclick="newBookModal()">Add book</button>
+			<button type="button" class="btn btn-outline-success mt-3 mb-3" onclick="newBookModal()">Add book</button>
 		</div>
 		
 		<div class="modal fade" id="newBookModal" tabindex="-1" role="dialog" aria-labelledby="newBookModalLabel" aria-hidden="true">
@@ -72,7 +73,7 @@ function loadBook(){
 		      </div>
 		      <div class="modal-footer">
 		        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-		        <button type="button" class="btn btn-dark" onclick="addBook()">Add module</button>
+		        <button type="button" class="btn btn-dark" onclick="addBook()">Add book</button>
 		      </div>
 		    </div>
 		  </div>
@@ -83,33 +84,6 @@ function loadBook(){
 	hideError()
 	$('.book-search-spinner').hide()
 }
-
-/*
-function getCourseModules(){
-	let queryString=window.location.search
-	const urlParams = new URLSearchParams(queryString)
-
-	$('.school-of').append(`
-		<h5>Course - `+urlParams.get("cname")+`</h5>
-	`)
-}
-
-function getSchool(){
-	let queryString=window.location.search
-	const urlParams = new URLSearchParams(queryString)
-	showSpinner()
-	axios.get(URL+"school/"+urlParams.get('i')).then(res=>{
-		console.log(res.data.school_icon)
-		$('.school-logo').append(`<img src="`+S_URL+res.data.school_icon+`" class="rounded"/>`)
-		$('.school-name').text(res.data.school)
-		hideSpinner()
-	}).catch(err=>{
-		$('.school-logo').append(`<img src="../img`+errorImage+`" class="rounded" width="10%" height="10%"/>`)
-		$('.school-name').text("Error 404 something went wrong")
-		hideSpinner()
-	})
-}
-*/
 
 function newBookModal(){
 	hideError()
@@ -132,9 +106,8 @@ function searchModule(){
           		$('.book-list').html("")
           		$('.book-search-spinner').hide()
           		if (res.data.length===0){
-          			$('.book-list').append(`
-						<h5 class="list-group-item list-group-item-dark">Book not available</h5>
-					`)
+          			$('.book-not-available').html("")
+          			$('.error-search').text("Book not available")
           		}else{
           			res.data.forEach((b,index)=>{
           				$('.book-list').append(`
@@ -172,4 +145,45 @@ function searchModule(){
           	})	
           }
     })
+}
+
+function addBook(){
+	hideError()
+	hideSuccess()
+	$('.book-spinner').hide()
+	let formData = new FormData()
+	let imageFile = document.querySelector('#cover_page')
+	let bookFile = document.querySelector('#book')
+
+	if($('#title').val() && $('#author').val() && $('#year').val() && $('#isbn').val() && imageFile.files[0] && bookFile.files[0]){
+		formData.append('title',$('#title').val())
+		formData.append('author',$('#author').val())
+		formData.append('publish_date',$('#year').val())
+		formData.append('isbn',$('#isbn').val())
+		formData.append('description',$('#description').val())
+		formData.append('cover_page',imageFile.files[0])
+		formData.append('book',bookFile.files[0])
+		formData.append("token",localStorage.getItem("token"))
+		$('.book-spinner').show()
+		axios.post(URL+"new_book",formData).then(res=>{
+			writeSuccessText($('#title').val().toUpperCase()+" has been added")
+			$('.book-spinner').hide()
+			$('#title').val('') 
+			$('#author').val('') 
+			$('#year').val('') 
+			$('#isbn').val('')
+			$('#description').val('')
+			$('#cover_page').val('')
+			$('#book').val('')
+			
+			showSuccess()
+		}).catch(err=>{
+			$('.book-spinner').hide()
+			writeErrorText(err.response.data.status)
+			showError()
+		})
+	}else{
+		writeErrorText('Fill in all the required fields')
+		showError()
+	}
 }
