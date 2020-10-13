@@ -92,7 +92,7 @@ function newBookModal(){
 	$('#newBookModal').modal('show')
 }
 
-function searchModule(){
+function searchBook(){
 	$('.book-search-spinner').hide()
 	$('.book-name').keyup(function(){
           if($('.book-name').val().length==0)
