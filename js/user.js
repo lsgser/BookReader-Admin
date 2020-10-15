@@ -98,6 +98,41 @@ function loadUser(){$('#content').append(`
 		    </div>
 		  </div>
 		</div>
+
+		<div class="modal fade" id="newEnrolModal" tabindex="-1" role="dialog" aria-labelledby="newEnrolModalLabel" aria-hidden="true">
+		  <div class="modal-dialog" role="document">
+		    <div class="modal-content">
+		      <div class="modal-header">
+		        <h5 class="modal-title" id="newEnrolModalLabel">Enrol to new module</h5>
+		        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+		          <span aria-hidden="true">&times;</span>
+		        </button>
+		      </div>
+		      <div class="modal-body">
+		      		<div class="alert alert-danger enrol-user-error" role="alert"></div>
+		      		<div class="alert alert-success enrol-user-success" role="alert"></div>
+		      		<div class="form-group">
+		      			<label for="modulesFormControlSelect" class="module-label">Select module to enrol user</label>
+		      			<select class="form-control" id="module_select">
+		      			</select>
+		      		</div>
+		      		<hr>
+		      		<div class="d-flex justify-content-center">
+						<h6 class="mt-3 enrol-list-heading"></h6>
+					</div>
+					<div class="d-flex justify-content-center list-group enrol-list">
+					</div>	      		
+		          	<div class="d-flex justify-content-center">
+				    	<div class="spinner-border text-success enrol-user-spinner">
+				    	</div>
+				    </div>
+		      </div>
+		      <div class="modal-footer">
+		        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+		      </div>
+		    </div>
+		  </div>
+		</div>
 	`)
 	
 	$('.user-search-spinner').hide()
@@ -109,8 +144,12 @@ function loadUser(){$('#content').append(`
 	$('.add-user-error').hide()
 	$('.add-user-success').hide()
 	$('.add-user-spinner').hide()
+	$('.enrol-user-spinner').hide()
+	$('.enrol-user-success').hide()
+	$('.enrol-user-error').hide()
 	$('.faculty-label').hide()
 	$('.user-details').hide()
+	$('#module_select').append(`<option>Select module</option>`)
 }
 
 function searchUser(){
@@ -137,7 +176,7 @@ function searchUser(){
 								<td>`+u.surname+`</td>
 								<td>`+u.student+`</td>
 								<td>`+u.email+`</td>
-								<td><button type="button" class="btn btn-outline-success" onclick="enrollUserModal()">Enroll</button></td>
+								<td><button type="button" class="btn btn-outline-success" onclick="enrollUserModal(`+u.student+`,`+u.school+`)">Enroll</button></td>
 							</tr>
 						`)	
           			})
@@ -265,12 +304,87 @@ function getCourse(faculty){
 	})
 }
 
-function enrollUserModal(){
+function enrollUserModal(student,school){
+	$('#newEnrolModal').modal('show')
+	$('.enrol-user-spinner').hide()
+	$('.enrol-user-success').hide()
+	$('.enrol-user-error').hide()
+	$('.enrol-list-heading').hide()
+	$('#module_select').html("")
+	$('#module_select').append(`<option>Select module</option>`)
 
+	$(".enrol-list").html("")
+	axios.get(URL+"enrolled_modules/"+student).then(res=>{
+		res.data.forEach((e,index)=>{
+			$(".enrol-list").append(`<a href="#" class="list-group-item list-group-item-dark">`+e.module+`</a>`)
+		})
+
+		if (res.data.length == 0)
+		{
+			$('.enrol-list-heading').text("User not enrolled for any module")
+		}else{
+			$('.enrol-list-heading').text("User enrolled for these modules")
+		}
+
+		$('.enrol-list-heading').show()
+	}).catch(err=>{
+		$('.enrol-user-error').text(err.response.data.status)
+		$('.enrol-user-error').show()
+	})
+
+	axios.get(URL+"modules_s/"+school).then(res => {
+		res.data.forEach((m,index)=>{
+			$('#module_select').append(`<option onclick="enroll(`+m.id+`,'`+student+`')">`+m.module+`</option>`)
+		})
+
+		if (res.data.length === 0){
+			$('.enrol-user-error').text("Modules don't exist for this institution")
+			$('.enrol-user-error').show()	
+		}
+	}).catch(err=>{
+		$('.enrol-user-error').text(err.response.data.status)
+		$('.enrol-user-error').show()	
+	})
 }
 
-function enroll(user,module){
-	
+function enroll(m,u){
+	$('.enrol-user-spinner').show()
+	$('.enrol-user-success').hide()
+	$('.enrol-user-error').hide()
+
+	axios.post(URL+"new_enrolled",JSON.stringify({
+			module:m,
+			user:u,
+			token:localStorage.getItem('token')
+		})
+	).then(res=>{
+		$('.enrol-user-success').text("User enrolled new module")
+		$('.enrol-user-success').show()
+		$(".enrol-list").html("")
+		axios.get(URL+"enrolled_modules/"+u).then(res=>{
+			res.data.forEach((e,index)=>{
+				$(".enrol-list").append(`<a href="#" class="list-group-item list-group-item-dark">`+e.module+`</a>`)
+			})
+
+			if (res.data.length == 0)
+			{
+				$('.enrol-list-heading').text("User not enrolled for any module")
+			}else{
+				$('.enrol-list-heading').text("User enrolled for these modules")
+			}
+
+			$('.enrol-list-heading').show()
+			$('.enrol-user-spinner').hide()
+		}).catch(err=>{
+			$('.enrol-user-error').text(err.response.data.status)
+			$('.enrol-user-error').show()
+			$('.enrol-user-spinner').hide()
+		})
+	}).catch(err => {
+		$('.enrol-user-error').text(err.response.data.status)
+		$('.enrol-user-error').show()
+		$('.enrol-user-spinner').hide()
+	})	
 }
 
 function addUser(){
@@ -329,4 +443,3 @@ function storeInstitution(course,faculty,school){
 	c = course
 	$('.user-details').show()
 }
-
